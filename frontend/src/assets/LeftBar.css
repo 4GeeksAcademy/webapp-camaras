@@ -1,0 +1,10 @@
+.leftbar-container {
+    display: flex;
+    position: fixed;
+    width: 25vh;
+    height: 100vh;
+    padding-top: 15vh;
+    color: black;
+    background-color: lightgray;
+    box-shadow: 0px 2px 10px rgba(151, 151, 151, 0.349);
+}

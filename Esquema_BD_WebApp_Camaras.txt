@@ -1,0 +1,117 @@
+
+===========================
+ ESQUEMA BASE DE DATOS - WEB APP CÁMARAS
+===========================
+
+Tipo de Base de Datos: PostgreSQL
+Notas: Almacenamiento de figuras del mapa en formato GeoJSON (JSONB). Uso de Leaflet en frontend.
+
+--------------------------------------------------
+1. Tabla: Roles
+--------------------------------------------------
+- id (PK)             : INT
+- name               : VARCHAR
+- description        : TEXT
+
+--------------------------------------------------
+2. Tabla: Users
+--------------------------------------------------
+- id (PK)             : INT
+- username           : VARCHAR
+- email              : VARCHAR
+- password_hash      : VARCHAR
+- role_id (FK)       : INT  --> Referencia a Roles(id)
+- created_at         : TIMESTAMP
+
+Relaciones:
+- Users.role_id ➜ Roles.id
+
+--------------------------------------------------
+3. Tabla: Cameras
+--------------------------------------------------
+- id (PK)             : INT
+- name               : VARCHAR
+- ip_address         : VARCHAR
+- username           : VARCHAR
+- password           : VARCHAR
+- connection_method  : VARCHAR   (Ej: RTSP, HTTP)
+- location_lat       : DECIMAL
+- location_lng       : DECIMAL
+- is_active          : BOOLEAN
+
+--------------------------------------------------
+4. Tabla: User_Cameras
+--------------------------------------------------
+- id (PK)             : INT
+- user_id (FK)       : INT  --> Referencia a Users(id)
+- camera_id (FK)     : INT  --> Referencia a Cameras(id)
+
+Relaciones:
+- User_Cameras.user_id ➜ Users.id
+- User_Cameras.camera_id ➜ Cameras.id
+
+--------------------------------------------------
+5. Tabla: ALPR_Records
+--------------------------------------------------
+- id (PK)             : INT
+- camera_id (FK)     : INT  --> Referencia a Cameras(id)
+- plate_number       : VARCHAR
+- detected_at        : TIMESTAMP
+- image_url          : VARCHAR
+- additional_data    : JSON
+
+Relaciones:
+- ALPR_Records.camera_id ➜ Cameras.id
+
+--------------------------------------------------
+6. Tabla: Map_Object_Types
+--------------------------------------------------
+- id (PK)             : INT
+- name               : VARCHAR   (Línea, Polígono, Marcador...)
+- description        : TEXT
+
+--------------------------------------------------
+7. Tabla: Map_Objects
+--------------------------------------------------
+- id (PK)             : INT
+- name               : VARCHAR
+- type_id (FK)       : INT  --> Referencia a Map_Object_Types(id)
+- geojson            : JSONB
+- color              : VARCHAR   (Código HEX)
+- created_by (FK)    : INT  --> Referencia a Users(id)
+- is_public          : BOOLEAN
+- created_at         : TIMESTAMP
+- updated_at         : TIMESTAMP
+
+Relaciones:
+- Map_Objects.type_id ➜ Map_Object_Types.id
+- Map_Objects.created_by ➜ Users.id
+
+--------------------------------------------------
+8. Tabla: Filters
+--------------------------------------------------
+- id (PK)             : INT
+- name               : VARCHAR
+- description        : TEXT
+- filter_query       : JSON   (Condiciones de filtro)
+
+--------------------------------------------------
+9. Tabla: User_Filters
+--------------------------------------------------
+- id (PK)             : INT
+- user_id (FK)       : INT  --> Referencia a Users(id)
+- filter_id (FK)     : INT  --> Referencia a Filters(id)
+- is_active          : BOOLEAN
+
+Relaciones:
+- User_Filters.user_id ➜ Users.id
+- User_Filters.filter_id ➜ Filters.id
+
+--------------------------------------------------
+Resumen de Relaciones Clave:
+--------------------------------------------------
+- Users ➜ Roles
+- Users ➜ User_Cameras ➜ Cameras
+- Cameras ➜ ALPR_Records
+- Users ➜ Map_Objects ➜ Map_Object_Types
+- Users ➜ User_Filters ➜ Filters
