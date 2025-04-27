@@ -1,7 +1,8 @@
 .leftbar-container {
     display: flex;
     position: fixed;
-    width: 25vh;
+    z-index: 1;
+    width: 10%;
     height: 100vh;
     padding-top: 15vh;
     color: black;

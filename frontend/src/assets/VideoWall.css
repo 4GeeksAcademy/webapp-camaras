@@ -1,0 +1,19 @@
+.content-container {
+    display: flex;
+    position: fixed;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 92vh;
+    background-color: black;
+    padding: 0px;
+    margin: 0px;
+    margin-top: 8vh;
+    padding-left: 10%;
+    color: white;
+}
+
+.videoBox {
+    width: 45%;
+    height: 50%;
+    border: 1px solid white;
+}
