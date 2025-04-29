@@ -2,13 +2,13 @@
     display: flex;
     position: fixed;
     flex-wrap: wrap;
-    width: 100%;
+    width: 90%;
     height: 92vh;
     background-color: black;
     padding: 0px;
     margin: 0px;
     margin-top: 8vh;
-    padding-left: 10%;
+    margin-left: 10%;
     color: white;
 }
 

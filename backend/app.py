@@ -3,7 +3,6 @@ from config import Config
 from extensions import db, jwt
 from flask_cors import CORS
 
-
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -18,13 +17,13 @@ def create_app():
     from routes.auth_routes import auth_bp
     from routes.camera_routes import camera_bp
     from routes.stream_routes import stream_bp
-
+    from routes.hls_routes import hls_bp
 
     # Registrar Blueprints
     app.register_blueprint(auth_bp, url_prefix='/api')
     app.register_blueprint(camera_bp, url_prefix='/api')
     app.register_blueprint(stream_bp)
-
+    app.register_blueprint(hls_bp)
 
     # Importar modelos para que SQLAlchemy los reconozca
     import models.db

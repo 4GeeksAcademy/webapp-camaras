@@ -1,77 +1,91 @@
+// frontend/src/components/VideoWallMenu.jsx
 import React, { useEffect, useState } from "react";
-import CameraModal from "./CameraModal"; // IMPORTANTE importar el Modal
+import CameraModal from "./CameraModal";
 import '../assets/VideoWallMenu.css';
 
 function VideoWallMenu({ setVideoLayout, setSelectedCameras }) {
-    const [cameras, setCameras] = useState([]);
-    const [showModal, setShowModal] = useState(false); // AÑADIDO para controlar el modal
+  const [cameras, setCameras] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
-    useEffect(() => {
-        fetch('https://redesigned-invention-q7pgr7v4445vf4gpv-5000.app.github.dev/api/cameras')
-            .then(response => response.json())
-            .then(data => setCameras(data))
-            .catch(error => console.error('Error al cargar las cámaras:', error));
-    }, []);
+  // Carga inicial de cámaras
+  useEffect(() => {
+    fetch('/api/cameras')
+      .then(response => response.json())
+      .then(data => setCameras(data))
+      .catch(error => console.error('Error al cargar las cámaras:', error));
+  }, []);
 
-    const handleCameraClick = (cameraId) => {
-        const index = cameras.findIndex(c => c.id === cameraId);
-        if (index !== -1) {
-            const selected = cameras.slice(index, index + 9); // hasta 9 cámaras
-            setSelectedCameras(selected);
-        }
-    };
+  // Alterna selección para el video wall
+  const handleCameraClick = (cam) => {
+    setSelectedCameras(prev => {
+      const exists = prev.find(c => c.id === cam.id);
+      if (exists) {
+        return prev.filter(c => c.id !== cam.id);
+      } else {
+        return [...prev, cam];
+      }
+    });
+  };
 
-    const handleDeleteCamera = (cameraId) => {
-        if (window.confirm('¿Seguro que quieres eliminar esta cámara?')) {
-            fetch(`https://redesigned-invention-q7pgr7v4445vf4gpv-5000.app.github.dev/api/cameras/${cameraId}`, {
-                method: 'DELETE',
-            })
-            .then(response => {
-                if (response.ok) {
-                    setCameras(prevCameras => prevCameras.filter(cam => cam.id !== cameraId));
-                } else {
-                    console.error('Error al eliminar la cámara');
-                }
-            })
-            .catch(error => console.error('Error en la solicitud de eliminación:', error));
-        }
-    };
+  // Elimina la cámara de la DB y del estado local
+  const handleDeleteCamera = (camId) => {
+    fetch(`/api/cameras/${camId}`, { method: 'DELETE' })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        // Actualiza la lista de cámaras
+        setCameras(prev => prev.filter(c => c.id !== camId));
+        // También quita de las seleccionadas, si estaba
+        setSelectedCameras(prev => prev.filter(c => c.id !== camId));
+      })
+      .catch(err => console.error('Error al eliminar cámara:', err));
+  };
 
-    return (
-        <div className="video-wall-menu">
-            <button onClick={() => setShowModal(true)}>➕ Añadir Cámara</button>
-            <button onClick={() => setVideoLayout('1')}>1 Cuadro</button>
-            <button onClick={() => setVideoLayout('4')}>4 Cuadros</button>
-            <button onClick={() => setVideoLayout('9')}>9 Cuadros</button>
+  return (
+    <div className="video-wall-menu">
+      {/* Controles de layout */}
+      <div className="layout-select">
+        <button onClick={() => setVideoLayout('1')}>1</button>
+        <button onClick={() => setVideoLayout('4')}>4</button>
+        <button onClick={() => setVideoLayout('9')}>9</button>
+      </div>
 
-            <div className="camera-list">
-                <h3>Listado de Cámaras</h3>
-                <ul>
-                    {cameras.map(camera => (
-                        <li 
-                            key={camera.id} 
-                            className="camera-item"
-                            onClick={() => handleCameraClick(camera.id)}
-                        >
-                            {camera.name}
-                            <button 
-                                className="delete-btn"
-                                onClick={(e) => { 
-                                    e.stopPropagation(); 
-                                    handleDeleteCamera(camera.id); 
-                                }}
-                            >
-                                ❌
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+      {/* Listado de cámaras */}
+      <div className="camera-list">
+        <ul>
+          {cameras.map(cam => (
+            <li
+              key={cam.id}
+              className="camera-item"
+              onClick={() => handleCameraClick(cam)}
+            >
+              {/* Nombre de la cámara */}
+              <span>{cam.name}</span>
+              {/* Botón de eliminar */}
+              <button
+                className="delete-btn"
+                onClick={e => {
+                  e.stopPropagation();          // evita toggles de selección
+                  handleDeleteCamera(cam.id);
+                }}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-            {/* Modal para añadir cámaras */}
-            {showModal && <CameraModal setShowModal={setShowModal} />}
-        </div>
-    );
+      {/* Botón para añadir nuevas cámaras */}
+      <button
+        className="add-camera-btn"
+        onClick={() => setShowModal(true)}
+      >
+        + Añadir cámara
+      </button>
+
+      {showModal && <CameraModal setShowModal={setShowModal} />}
+    </div>
+  );
 }
 
 export default VideoWallMenu;
