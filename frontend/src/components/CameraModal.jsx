@@ -22,7 +22,7 @@ function CameraModal({ onClose }) {
         e.preventDefault();
 
         try {
-            const response = await fetch('https://redesigned-invention-q7pgr7v4445vf4gpv-5000.app.github.dev/api/cameras', {
+            const response = await fetch('https://ubiquitous-waffle-v6q746prrqx4hxxqj-3000.app.github.dev/api/cameras', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,0 +1,74 @@
+sudo service postgresql start
+
+python app.py
+
+node streamer.js
+
+npm start
+
+
+
+
+# Pasos para iniciar la WebApp de Cámaras en un nuevo Codespaces
+
+1. **Actualizar e instalar paquetes necesarios**
+```bash
+sudo apt update
+sudo apt install ffmpeg postgresql postgresql-contrib -y
+```
+
+2. **Iniciar el servicio de PostgreSQL**
+```bash
+sudo service postgresql start
+```
+
+3. **Crear la base de datos y el usuario en PostgreSQL**
+Entrar a PostgreSQL:
+```bash
+psql -h localhost -U postgres
+```
+Dentro de PostgreSQL, ejecutar:
+```sql
+CREATE USER dev WITH PASSWORD 'password123';
+CREATE DATABASE webapp_camaras OWNER dev;
+GRANT ALL PRIVILEGES ON DATABASE webapp_camaras TO dev;
+\q
+```
+
+4. **Importar el esquema de la base de datos**
+```bash
+psql -U dev -d webapp_camaras -h localhost -f ../Esquema_BD_WebApp_Camaras.txt
+```
+*(Ajusta la ruta si estás en otra carpeta)*
+
+5. **Instalar dependencias de Python (backend)**
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+6. **Instalar dependencias de Node.js (streamer.js)**
+```bash
+cd backend
+npm install
+```
+
+7. **Iniciar el backend (Flask)**
+En una terminal:
+```bash
+cd backend
+python app.py
+```
+
+8. **Iniciar el servicio de streamer.js**
+En otra terminal nueva:
+```bash
+cd backend
+node streamer.js
+```
+
+# Notas importantes:
+- PostgreSQL debe estar activo siempre (`sudo service postgresql start`).
+- `ffmpeg` debe estar instalado para que streamer.js funcione correctamente.
+- El backend Flask se levanta en `http://localhost:5000`.
+- El streamer se conecta a `ws://localhost:9999/stream/<cameraId>`.
