@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function CameraModal({ onClose }) {
+function CameraModal({ onClose, addCameraToList }) {
     const [formData, setFormData] = useState({
         name: '',
         ip_address: '',
@@ -22,7 +22,7 @@ function CameraModal({ onClose }) {
         e.preventDefault();
 
         try {
-            const response = await fetch('https://ubiquitous-waffle-v6q746prrqx4hxxqj-3000.app.github.dev/api/cameras', {
+            const response = await fetch('/api/cameras', {  // RUTA RELATIVA, correcto
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -33,7 +33,12 @@ function CameraModal({ onClose }) {
             if (response.status === 201) {
                 const data = await response.json();
                 alert('Cámara añadida correctamente');
-                console.log(data);
+
+                // Actualiza la lista de cámaras en el VideoWallMenu
+                if (addCameraToList) {
+                    addCameraToList(data); 
+                }
+
                 onClose();  // Cierra el modal
             } else {
                 const error = await response.json();

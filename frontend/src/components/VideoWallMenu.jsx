@@ -83,7 +83,7 @@ function VideoWallMenu({ setVideoLayout, setSelectedCameras }) {
         + Añadir cámara
       </button>
 
-      {showModal && <CameraModal setShowModal={setShowModal} />}
+      {showModal && <CameraModal onClose={() => setShowModal(false)} addCameraToList={(newCamera) => setCameras(prev => [...prev, newCamera])} />}
     </div>
   );
 }
