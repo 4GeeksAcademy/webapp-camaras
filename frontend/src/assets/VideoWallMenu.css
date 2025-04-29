@@ -1,0 +1,44 @@
+.video-wall-menu {
+    padding: 10px;
+}
+
+.camera-list {
+    margin-top: 20px;
+}
+
+.camera-list ul {
+    padding: 0;
+    list-style: none;
+}
+
+.camera-item {
+    position: relative;
+    margin-bottom: 10px;
+    padding: 5px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.camera-item:hover {
+    background: #e0e0e0;
+}
+
+.delete-btn {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.camera-item:hover .delete-btn {
+    display: block;
+}

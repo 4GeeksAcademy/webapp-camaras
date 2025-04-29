@@ -1,15 +1,18 @@
-import React from "react";
-import '../assets/LeftBar.css'
+import React from 'react';
+import '../assets/LeftBar.css';
+import VideoWallMenu from './VideoWallMenu';   // importamos aquí
 
-
-function LeftBar() {
-
-
+function LeftBar({ setShowModal, setVideoLayout, setSelectedCameras }) {
     return (
         <div className="leftbar-container">
-            <h1>Prueba</h1>
+            {/* Solo en la página principal mostramos VideoWallMenu */}
+            <VideoWallMenu 
+              setShowModal={setShowModal}
+              setVideoLayout={setVideoLayout}
+              setSelectedCameras={setSelectedCameras}
+            />
         </div>
-    )
+    );
 }
 
 export default LeftBar;

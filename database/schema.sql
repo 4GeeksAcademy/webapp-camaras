@@ -1,8 +1,3 @@
-
--- ==============================================
--- Esquema de Base de Datos para WebApp Cámaras
--- ==============================================
-
 -- Crear tabla de Roles
 CREATE TABLE Roles (
     id SERIAL PRIMARY KEY,
