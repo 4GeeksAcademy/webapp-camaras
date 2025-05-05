@@ -35,3 +35,27 @@ class Camera(db.Model):
             },
             'is_active': self.is_active
         }
+
+
+class ALPRRecord(db.Model):
+    __tablename__ = 'alpr_records'
+
+    id = db.Column(db.Integer, primary_key=True)
+    camera_id = db.Column(db.Integer, db.ForeignKey('cameras.id'))
+    plate_number = db.Column(db.String(20))
+    detected_at = db.Column(db.DateTime)
+    image_url = db.Column(db.String(255))
+    country = db.Column(db.String(10))
+    confidence = db.Column(db.Numeric(5,2))
+    left_pos = db.Column(db.Integer)
+    top_pos = db.Column(db.Integer)
+    right_pos = db.Column(db.Integer)
+    bottom_pos = db.Column(db.Integer)
+    char_height = db.Column(db.Integer)
+    processing_time = db.Column(db.Integer)
+    multiplate = db.Column(db.String(10))
+    direction = db.Column(db.String(10))
+    vehicle_type = db.Column(db.String(20))
+    vehicle_color = db.Column(db.String(20))
+    vehicle_model = db.Column(db.String(50))
+    vehicle_make = db.Column(db.String(50))

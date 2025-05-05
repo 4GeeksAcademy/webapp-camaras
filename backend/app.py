@@ -18,12 +18,14 @@ def create_app():
     from routes.camera_routes import camera_bp
     from routes.stream_routes import stream_bp
     from routes.hls_routes import hls_bp
+    from routes.alpr_routes import alpr_bp  # ✅ IMPORTA AQUI
 
     # Registrar Blueprints
     app.register_blueprint(auth_bp, url_prefix='/api')
     app.register_blueprint(camera_bp, url_prefix='/api')
     app.register_blueprint(stream_bp)
     app.register_blueprint(hls_bp)
+    app.register_blueprint(alpr_bp, url_prefix='/api')  # ✅ REGISTRA AQUI
 
     # Importar modelos para que SQLAlchemy los reconozca
     import models.db

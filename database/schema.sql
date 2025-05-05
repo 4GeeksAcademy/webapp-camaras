@@ -34,7 +34,7 @@ CREATE TABLE ALPR_Records (
     camera_id INT REFERENCES Cameras(id),
     plate_number VARCHAR(20) NOT NULL,
     detected_at TIMESTAMP DEFAULT NOW(),
-    image_url VARCHAR(255),
+    image_url TEXT,
     country VARCHAR(10),
     confidence NUMERIC(5,2),
     left_pos INT,
