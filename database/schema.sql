@@ -35,8 +35,23 @@ CREATE TABLE ALPR_Records (
     plate_number VARCHAR(20) NOT NULL,
     detected_at TIMESTAMP DEFAULT NOW(),
     image_url VARCHAR(255),
+    country VARCHAR(10),
+    confidence NUMERIC(5,2),
+    left_pos INT,
+    top_pos INT,
+    right_pos INT,
+    bottom_pos INT,
+    char_height INT,
+    processing_time INT,
+    multiplate VARCHAR(10),
+    direction VARCHAR(10),
+    vehicle_type VARCHAR(20),
+    vehicle_color VARCHAR(20),
+    vehicle_model VARCHAR(50),
+    vehicle_make VARCHAR(50),
     additional_data JSON
 );
+
 
 -- Crear tabla de Tipos de Objetos del Mapa
 CREATE TABLE Map_Object_Types (

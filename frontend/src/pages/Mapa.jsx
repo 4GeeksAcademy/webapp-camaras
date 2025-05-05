@@ -28,7 +28,7 @@ function Mapa() {
 
     return (
         <div className="content-container">
-            <MapContainer center={[40.4168, -3.7038]} zoom={13} style={{ height: "100%", width: "100%" }}>
+            <MapContainer center={[41.38879, 2.15899]} zoom={13} style={{ height: "100%", width: "100%" }}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; OpenStreetMap contributors'
