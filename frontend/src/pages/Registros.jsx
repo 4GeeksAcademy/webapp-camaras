@@ -1,11 +1,13 @@
-// frontend/src/pages/Registros.jsx
 import React, { useEffect, useState } from 'react';
+import { getAuthHeader } from '../utils/auth';
 
 function Registros() {
   const [records, setRecords] = useState([]);
 
   useEffect(() => {
-    fetch('/api/alpr-records')
+    fetch('/api/alpr-records', {
+      headers: getAuthHeader(),
+    })
       .then(response => response.json())
       .then(data => setRecords(data))
       .catch(err => console.error('Error al cargar registros:', err));

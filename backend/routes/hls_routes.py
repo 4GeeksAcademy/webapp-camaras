@@ -1,5 +1,3 @@
-# backend/routes/hls_routes.py
-
 import os
 import subprocess
 from flask import Blueprint, current_app, send_from_directory, jsonify
@@ -22,13 +20,13 @@ def start_hls_for_camera(camera):
         cmd = [
             'ffmpeg',
             '-rtsp_transport', 'tcp',
-            '-re',                       # leer a velocidad real
+            '-re',
             '-i', rtsp_url,
-            '-c:v', 'copy',              # copiar H.264 directamente
-            '-an',                       # sin audio
+            '-c:v', 'copy',
+            '-an',
             '-f', 'hls',
-            '-hls_time', '2',            # duración de cada segmento
-            '-hls_list_size', '3',       # mantener solo 3 segmentos en la playlist
+            '-hls_time', '2',
+            '-hls_list_size', '3',
             '-hls_flags', 'delete_segments+omit_endlist',
             '-hls_allow_cache', '0',
             '-hls_segment_filename', os.path.join(cam_dir, 'segment_%03d.ts'),
@@ -38,6 +36,7 @@ def start_hls_for_camera(camera):
 
     return cam_dir
 
+# Servir HLS (público, sin autenticación)
 @hls_bp.route('/api/hls/<int:camera_id>/<path:filename>')
 def serve_hls(camera_id, filename):
     camera = Camera.query.get(camera_id)
@@ -46,3 +45,6 @@ def serve_hls(camera_id, filename):
 
     cam_dir = start_hls_for_camera(camera)
     return send_from_directory(cam_dir, filename)
+
+# ✅ Nota: este endpoint está público para que el frontend pueda acceder a los streams HLS sin autenticación.
+# Si necesitas protegerlo, puedes agregar decoradores como @jwt_required() más adelante solo si es necesario.

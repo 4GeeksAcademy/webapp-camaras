@@ -1,9 +1,11 @@
 from flask import Blueprint, request, jsonify
 from models.db import ALPRRecord, Camera
 from extensions import db
+from flask_jwt_extended import jwt_required
 
 alpr_bp = Blueprint('alpr', __name__)
 
+# Recibir datos ALPR (sin auth, viene de las cámaras)
 @alpr_bp.route('/alpr-records', methods=['POST'])
 def receive_alpr():
     data = request.get_json()
@@ -38,6 +40,7 @@ def receive_alpr():
 
     return jsonify({"message": "Registro guardado"}), 201
 
+# Consultar registros ALPR (público, sin autenticación)
 @alpr_bp.route('/alpr-records', methods=['GET'])
 def get_alpr():
     records = db.session.query(ALPRRecord, Camera).join(Camera).order_by(ALPRRecord.detected_at.desc()).all()
@@ -57,3 +60,7 @@ def get_alpr():
             'vehicle_make': record.vehicle_make
         })
     return jsonify(result)
+
+# ✅ Nota:
+# Hemos quitado @jwt_required del GET /alpr-records para que sea accesible públicamente.
+# Si quieres volver a protegerlo, solo vuelve a añadir @jwt_required() arriba de la función get_alpr.

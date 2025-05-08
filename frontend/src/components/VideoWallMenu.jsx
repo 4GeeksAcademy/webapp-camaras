@@ -1,4 +1,3 @@
-// frontend/src/components/VideoWallMenu.jsx
 import React, { useEffect, useState } from "react";
 import CameraModal from "./CameraModal";
 import '../assets/VideoWallMenu.css';
@@ -7,83 +6,91 @@ function VideoWallMenu({ setVideoLayout, setSelectedCameras }) {
   const [cameras, setCameras] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
-  // Carga inicial de cámaras
   useEffect(() => {
     fetch('/api/cameras')
-      .then(response => response.json())
-      .then(data => setCameras(data))
-      .catch(error => console.error('Error al cargar las cámaras:', error));
+      .then(async res => {
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setCameras(data);
+          } else {
+            console.error('⚠️ Respuesta inesperada (no es array):', data);
+            setCameras([]);
+          }
+        } else {
+          const errorText = await res.text();
+          console.error('❌ Error al cargar cámaras:', errorText);
+          setCameras([]);
+        }
+      })
+      .catch(err => {
+        console.error('❌ Error al cargar cámaras (catch):', err);
+        setCameras([]);
+      });
   }, []);
 
-  // Alterna selección para el video wall
   const handleCameraClick = (cam) => {
-    setSelectedCameras(prev => {
+    setSelectedCameras && setSelectedCameras(prev => {
       const exists = prev.find(c => c.id === cam.id);
-      if (exists) {
-        return prev.filter(c => c.id !== cam.id);
-      } else {
-        return [...prev, cam];
-      }
+      return exists ? prev.filter(c => c.id !== cam.id) : [...prev, cam];
     });
   };
 
-  // Elimina la cámara de la DB y del estado local
   const handleDeleteCamera = (camId) => {
     fetch(`/api/cameras/${camId}`, { method: 'DELETE' })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        // Actualiza la lista de cámaras
         setCameras(prev => prev.filter(c => c.id !== camId));
-        // También quita de las seleccionadas, si estaba
-        setSelectedCameras(prev => prev.filter(c => c.id !== camId));
+        setSelectedCameras && setSelectedCameras(prev => prev.filter(c => c.id !== camId));
       })
-      .catch(err => console.error('Error al eliminar cámara:', err));
+      .catch(err => console.error('❌ Error al eliminar cámara:', err));
   };
 
   return (
     <div className="video-wall-menu">
-      {/* Controles de layout */}
       <div className="layout-select">
-        <button onClick={() => setVideoLayout('1')}>1</button>
-        <button onClick={() => setVideoLayout('4')}>4</button>
-        <button onClick={() => setVideoLayout('9')}>9</button>
+        <button onClick={() => setVideoLayout && setVideoLayout('1')}>1</button>
+        <button onClick={() => setVideoLayout && setVideoLayout('4')}>4</button>
+        <button onClick={() => setVideoLayout && setVideoLayout('9')}>9</button>
       </div>
 
-      {/* Listado de cámaras */}
       <div className="camera-list">
         <ul>
-          {cameras.map(cam => (
-            <li
-              key={cam.id}
-              className="camera-item"
-              onClick={() => handleCameraClick(cam)}
-            >
-              {/* Nombre de la cámara */}
-              <span>{cam.name}</span>
-              {/* Botón de eliminar */}
-              <button
-                className="delete-btn"
-                onClick={e => {
-                  e.stopPropagation();          // evita toggles de selección
-                  handleDeleteCamera(cam.id);
-                }}
+          {Array.isArray(cameras) && cameras.length > 0 ? (
+            cameras.map(cam => (
+              <li
+                key={cam.id}
+                className="camera-item"
+                onClick={() => handleCameraClick(cam)}
               >
-                ×
-              </button>
-            </li>
-          ))}
+                <span>{cam.name}</span>
+                <button
+                  className="delete-btn"
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleDeleteCamera(cam.id);
+                  }}
+                >
+                  ×
+                </button>
+              </li>
+            ))
+          ) : (
+            <li style={{ padding: '0.5rem', listStyle: 'none' }}>No hay cámaras cargadas o hubo un error.</li>
+          )}
         </ul>
       </div>
 
-      {/* Botón para añadir nuevas cámaras */}
-      <button
-        className="add-camera-btn"
-        onClick={() => setShowModal(true)}
-      >
+      <button className="add-camera-btn" onClick={() => setShowModal(true)}>
         + Añadir cámara
       </button>
 
-      {showModal && <CameraModal onClose={() => setShowModal(false)} addCameraToList={(newCamera) => setCameras(prev => [...prev, newCamera])} />}
+      {showModal && (
+        <CameraModal
+          onClose={() => setShowModal(false)}
+          addCameraToList={(newCamera) => setCameras(prev => [...prev, newCamera])}
+        />
+      )}
     </div>
   );
 }
