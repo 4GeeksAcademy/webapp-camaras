@@ -1,7 +1,8 @@
+// frontend/src/pages/Registros.jsx
 import React, { useEffect, useState } from 'react';
 import { getAuthHeader } from '../utils/auth';
 
-function Registros() {
+function Registros({ filters }) {
   const [records, setRecords] = useState([]);
 
   useEffect(() => {
@@ -13,10 +14,31 @@ function Registros() {
       .catch(err => console.error('Error al cargar registros:', err));
   }, []);
 
+  const applyFilters = (record) => {
+    if (!filters) return true;
+    const matchesPlate = filters.plate ? record.plate_number.includes(filters.plate) : true;
+    const matchesCamera = filters.cameraId ? record.camera_name === filters.cameraId : true;
+    const matchesType = filters.vehicleType ? record.vehicle_type === filters.vehicleType : true;
+    const matchesMake = filters.vehicleMake ? record.vehicle_make === filters.vehicleMake : true;
+    const matchesModel = filters.vehicleModel ? record.vehicle_model === filters.vehicleModel : true;
+    const matchesStartDate = filters.startDate ? new Date(record.detected_at) >= new Date(filters.startDate) : true;
+    const matchesEndDate = filters.endDate ? new Date(record.detected_at) <= new Date(filters.endDate) : true;
+
+    return (
+      matchesPlate &&
+      matchesCamera &&
+      matchesType &&
+      matchesMake &&
+      matchesModel &&
+      matchesStartDate &&
+      matchesEndDate
+    );
+  };
+
   return (
     <div className="content-container">
       <h2>Registros ALPR</h2>
-      <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table border="1" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
         <thead>
           <tr>
             <th>ID</th>
@@ -33,7 +55,7 @@ function Registros() {
           </tr>
         </thead>
         <tbody>
-          {records.map(record => (
+          {records.filter(applyFilters).map(record => (
             <tr key={record.id}>
               <td>{record.id}</td>
               <td>{record.camera_name}</td>

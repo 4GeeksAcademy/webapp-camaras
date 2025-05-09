@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'; // Importamos useLocation
 import '../assets/LeftBar.css';
 import VideoWallMenu from './VideoWallMenu';   // importamos VideoWallMenu
 import AjustesMenu from './AjustesMenu';
+import RegistrosMenu from './RegistrosMenu';
 
 
 function LeftBar({ setShowModal, setVideoLayout, setSelectedCameras }) {
@@ -26,12 +27,12 @@ function LeftBar({ setShowModal, setVideoLayout, setSelectedCameras }) {
             )}
 
             {location.pathname === '/registros' && (
-                <div className="leftbar-content">
-                    <h2>Registros ALPR</h2>
-                    <p>Aquí irá el menú de los registros ALPR.</p>
-                </div>
+                <RegistrosMenu />
             )}
             {location.pathname === '/ajustes' && (
+                <AjustesMenu />
+            )}
+            {location.pathname === '/ajustes1' && (
                 <AjustesMenu />
             )}
         </div>
